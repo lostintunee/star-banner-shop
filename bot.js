@@ -107,15 +107,24 @@ export function startBot() {
   });
 
   bot.on('message:successful_payment', async (ctx) => {
-    const payload = ctx.message.successful_payment.invoice_payload;
-    const product = getProduct(payload);
+    const payment = ctx.message.successful_payment;
+    const product = getProduct(payment.invoice_payload);
     if (!product) {
-      return ctx.reply('Оплата прошла, но товар не найден. Напишите администратору.');
-    }
-    if (product.fileType === 'video') {
+      await ctx.reply('Оплата прошла, но товар не найден. Напишите администратору.');
+    } else if (product.fileType === 'video') {
       await ctx.replyWithVideo(product.fileId, { caption: 'Спасибо за покупку! 🎉' });
     } else {
       await ctx.replyWithPhoto(product.fileId, { caption: 'Спасибо за покупку! 🎉' });
+    }
+
+    if (ADMIN_ID) {
+      const buyer = ctx.from.username ? `@${ctx.from.username}` : `id ${ctx.from.id}`;
+      await ctx.api
+        .sendMessage(
+          ADMIN_ID,
+          `💰 Новая продажа!\n\nТовар: ${product ? product.title : payment.invoice_payload}\nЦена: ${payment.total_amount} ⭐\nПокупатель: ${buyer}`
+        )
+        .catch((err) => console.error('Не удалось уведомить админа:', err.message));
     }
   });
 
