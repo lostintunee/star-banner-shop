@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход в админку</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="admin-wrap" style="max-width:360px; padding-top:80px;">
+  <div class="card">
+    <h3>Вход в админку</h3>
+    <% if (error) { %><p class="error"><%= error %></p><% } %>
+    <form method="post" action="/admin/login">
+      <label>Пароль</label>
+      <input type="password" name="password" required autofocus>
+      <button class="submit-btn" type="submit">Войти</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

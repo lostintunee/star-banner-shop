@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Эксклюзивный контент</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="wrap">
+  <% if (banners.length === 0) { %>
+    <p class="empty">Баннеров пока нет. Зайдите в <a href="/admin">админку</a>, чтобы добавить первый.</p>
+  <% } %>
+  <% banners.forEach(function(b) { %>
+    <div class="banner">
+      <% if (b.imagePath) { %><img src="<%= b.imagePath %>" alt="<%= b.title %>">
+      <% } %>
+      <div class="banner-body">
+        <h2><%= b.title %></h2>
+        <p><%= b.description %></p>
+        <a class="buy-btn" href="<%= b.invoiceLink || ('https://t.me/' + b.botUsername + '?start=' + b.productId) %>" target="_blank" rel="noopener">
+          <%= b.buttonText %><% if (b.priceStars) { %> — <%= b.priceStars %> ⭐<% } %>
+        </a>
+      </div>
+    </div>
+  <% }) %>
+</div>
+</body>
+</html>

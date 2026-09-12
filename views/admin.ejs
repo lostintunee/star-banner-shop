@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Админка баннеров</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="admin-wrap">
+  <div class="top-bar">
+    <a href="/" target="_blank">← Посмотреть сайт</a>
+    <form method="post" action="/admin/logout" style="margin:0;">
+      <button type="submit" style="background:transparent;border:none;color:#ffd15c;font-size:14px;cursor:pointer;padding:0;">Выйти</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Добавить баннер</h3>
+    <p class="hint">
+      Сначала пришлите фото/видео вашему боту в Telegram и назначьте цену — он вернёт
+      «код товара». Вставьте этот код в поле ниже.
+    </p>
+    <form method="post" action="/admin/banners" enctype="multipart/form-data">
+      <label>Изображение баннера</label>
+      <input type="file" name="image" accept="image/*" required>
+
+      <label>Заголовок</label>
+      <input type="text" name="title" placeholder="Этот ролик взорвал интернет 🔥" required>
+
+      <label>Текст / описание</label>
+      <textarea name="description" placeholder="Получи это видео за 100 звёзд в Telegram"></textarea>
+
+      <label>Текст кнопки</label>
+      <input type="text" name="buttonText" value="Купить за ⭐" required>
+
+      <label>Код товара (из бота)</label>
+      <input type="text" name="productId" placeholder="например: m1k2j3" required>
+
+      <label>Username бота (без @)</label>
+      <input type="text" name="botUsername" value="<%= defaultBotUsername %>" placeholder="my_stars_bot" required>
+
+      <button class="submit-btn" type="submit">Создать баннер</button>
+    </form>
+  </div>
+
+  <h3>Баннеры (<%= banners.length %>)</h3>
+  <% banners.slice().reverse().forEach(function(b) { %>
+    <div class="card">
+      <div class="banner-row">
+        <% if (b.imagePath) { %><img src="<%= b.imagePath %>" alt=""><% } %>
+        <div class="meta">
+          <strong><%= b.title %><% if (b.priceStars) { %> · <%= b.priceStars %> ⭐<% } %></strong>
+          <span>
+            <% if (b.invoiceLink) { %>
+              <%= b.invoiceLink %> (прямая оплата)
+            <% } else { %>
+              https://t.me/<%= b.botUsername %>?start=<%= b.productId %> (запуск бота)
+            <% } %>
+          </span>
+        </div>
+        <form method="post" action="/admin/banners/<%= b.id %>/delete" onsubmit="return confirm('Удалить баннер?');">
+          <button class="delete-btn" type="submit">Удалить</button>
+        </form>
+      </div>
+    </div>
+  <% }) %>
+</div>
+</body>
+</html>
